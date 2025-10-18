@@ -26,14 +26,14 @@ public class GreeterService : Greeter.GreeterBase
     {
         var collection = _mongo.GetCollection<DataModel>("iot_data_timeseries");
 
-        var sensor = await collection.Find(x => x.DataId == request.DataId).FirstOrDefaultAsync();
+        var sensor = await collection.Find(x => x.Metadata!.DataId == request.DataId).FirstOrDefaultAsync();
 
         if (sensor == null)
             throw new RpcException(new Status(StatusCode.NotFound, "Sensor not found"));
 
         return new SensorReply
         {
-            DataId = sensor.DataId,
+            DataId = sensor.Metadata!.DataId,
             Temperature = sensor.Temperature,
             Humidity = sensor.Humidity,
             WaterLevel = sensor.WaterLevel,

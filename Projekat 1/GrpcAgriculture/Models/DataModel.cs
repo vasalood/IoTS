@@ -5,14 +5,14 @@ namespace GrpcAgriculture.Models;
 
 public class DataModel
 {
-    [BsonId] //mapira "_id" polje iz MongoDB
+    [BsonId]
     public ObjectId ObjId { get; set; }
 
-    [BsonElement("Id")] 
-    public int DataId { get; set; }
+    [BsonElement("metadata")]
+    public Metadata? Metadata { get; set; }
 
     [BsonElement("timestamp")]
-    public DateTime Timestamp { get; set; } 
+    public DateTime Timestamp { get; set; }
 
     [BsonElement("temperature")]
     public int Temperature { get; set; }
@@ -33,6 +33,20 @@ public class DataModel
     public int K { get; set; }
 
     [BsonElement("Watering_plant_pump_ON")]
-    public int WateringPumpOn { get; set; }
+    [BsonRepresentation(BsonType.Int32)]
+    public bool WateringPumpOn { get; set; }
 }
+public class Metadata
+{
+  [BsonElement("Id")]
+  public int DataId { get; set; }
 
+  [BsonElement("location")]
+  public string? Location { get; set; }
+
+  [BsonElement("sensor_name")]
+  public string? SensorName { get; set; }
+
+  [BsonElement("is_deleted")]
+  public bool IsDataDeleted { get; set; }
+}

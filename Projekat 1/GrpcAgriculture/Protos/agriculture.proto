@@ -8,13 +8,13 @@ import "google/protobuf/timestamp.proto";
 
 service Agriculture {
   rpc GetData(RequestById) returns (SingleDataResponse);
-  rpc GetDataByTimeSpan(RequestByTimeSpan) returns (stream Data);
-  rpc UpdateData(RequestById) returns (SingleDataResponse);
+  rpc GetDataByTimeSpan(RequestByTimeSpan) returns (stream SingleDataResponse);
+  rpc UpdateData(UpdateRequest) returns (FeedbackResponse);
   rpc AddData(AddRequest) returns (FeedbackResponse);
   rpc DeleteData(RequestById) returns (FeedbackResponse);
-  rpc MaxTemperature(RequestByTimeSpan) returns (Data);
-  rpc MinHumidity(RequestByTimeSpan) returns (Data);
-  rpc AvgTempAndHum(RequestByTimeSpan) returns (AvgResponse);
+  rpc MaxTemperature(RequestByTimeSpan) returns (SingleDataResponse);
+  rpc MinHumidity(RequestByStartDateTime) returns (SingleDataResponse);
+  rpc AvgTempAndHum(stream MonthRequest) returns (stream AvgResponse);
   rpc CountWaterPumpOn(RequestByTimeSpan) returns (SumResponse);
 }
 
@@ -22,11 +22,17 @@ message RequestById {
   int32 data_id = 1;
 }
 
-message Data {
+message Metadata {
   int32 data_id = 1;
-  double temperature = 2;
-  double humidity = 3;
-  double water_level = 4;
+  string location = 2;
+  string sensor_name = 3;
+}
+
+message Data {
+  Metadata metadata = 1;
+  int32 temperature = 2;
+  int32 humidity = 3;
+  int32 water_level = 4;
   int32 K = 5;
   int32 P = 6;
   int32 N = 7;
@@ -35,18 +41,30 @@ message Data {
 
 message SingleDataResponse {
   Data response = 1;
-  string timestamp = 5;
+  string timestamp = 2;
+}
+
+message UpdateRequest {
+  int32 data_id = 1;
+  string new_location = 2;
+}
+
+message UpdateResponse {
+  Metadata metadata = 1;
+  int32 temperature = 2;
+  int32 humidity = 3;
 }
 
 message AddRequest {
-  int32 temperature = 1;
-  int32 humidity = 2;
-  int32 water_level = 3;
-  int32 K = 4;
-  int32 P = 5;
-  int32 N = 6;
-  bool watering_plant_pump_ON = 7;
-  google.protobuf.Timestamp timestamp = 8;
+  string location = 1;
+  string sensor_name = 2;
+  int32 temperature = 3;
+  int32 humidity = 4;
+  int32 water_level = 5;
+  int32 K = 6;
+  int32 P = 7;
+  int32 N = 8;
+  bool watering_plant_pump_ON = 9;
 }
 
 message FeedbackResponse {
@@ -58,16 +76,23 @@ message RequestByTimeSpan {
   google.protobuf.Timestamp end_time = 2;
 }
 
+message RequestByStartDateTime {
+  google.protobuf.Timestamp date_time = 1;
+}
+
 message AvgResponse {
-  double temperature = 1;
-  double humidity = 2;
+  bool isValid = 1;
+  double temperature = 2;
+  double humidity = 3;
+  string month_label = 4;
+  string error_message = 5;
 }
 
 message SumResponse {
   int32 count = 1;
 }
 
-
-
-
-
+message MonthRequest {
+  int32 year = 1;
+  int32 month = 2;
+}

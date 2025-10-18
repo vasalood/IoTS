@@ -1,0 +1,33 @@
+# Visual Studio / VS Code
+.vscode/
+*.user
+*.suo
+*.tmp
+*.log
+*.DS_Store
+
+# Binaries
+bin/
+obj/
+*.exe
+*.dll
+*.pdb
+
+# Data / exported files
+Data/
+*.csv
+*.db
+*.bak
+
+# Projekat-specific
+Projekat1/*.txt
+
+# Dotnet
+*.vs/
+*.nupkg
+*.snupkg
+
+# Ignore Docker volumes (optional)
+volumes/
+
+*.txt
