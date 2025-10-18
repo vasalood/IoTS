@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcAgriculture";
+
+package greet;
+
+import "google/protobuf/timestamp.proto";
+
+service Agriculture {
+  rpc GetData(RequestById) returns (SingleDataResponse);
+  rpc GetDataByTimeSpan(RequestByTimeSpan) returns (stream Data);
+  rpc UpdateData(RequestById) returns (SingleDataResponse);
+  rpc AddData(AddRequest) returns (FeedbackResponse);
+  rpc DeleteData(RequestById) returns (FeedbackResponse);
+  rpc MaxTemperature(RequestByTimeSpan) returns (Data);
+  rpc MinHumidity(RequestByTimeSpan) returns (Data);
+  rpc AvgTempAndHum(RequestByTimeSpan) returns (AvgResponse);
+  rpc CountWaterPumpOn(RequestByTimeSpan) returns (SumResponse);
+}
+
+message RequestById {
+  int32 data_id = 1;
+}
+
+message Data {
+  int32 data_id = 1;
+  double temperature = 2;
+  double humidity = 3;
+  double water_level = 4;
+  int32 K = 5;
+  int32 P = 6;
+  int32 N = 7;
+  bool watering_plant_pump_ON = 8;
+}
+
+message SingleDataResponse {
+  Data response = 1;
+  string timestamp = 5;
+}
+
+message AddRequest {
+  int32 temperature = 1;
+  int32 humidity = 2;
+  int32 water_level = 3;
+  int32 K = 4;
+  int32 P = 5;
+  int32 N = 6;
+  bool watering_plant_pump_ON = 7;
+  google.protobuf.Timestamp timestamp = 8;
+}
+
+message FeedbackResponse {
+  string feedback = 1;
+}
+
+message RequestByTimeSpan {
+  google.protobuf.Timestamp start_time = 1;
+  google.protobuf.Timestamp end_time = 2;
+}
+
+message AvgResponse {
+  double temperature = 1;
+  double humidity = 2;
+}
+
+message SumResponse {
+  int32 count = 1;
+}
+
+
+
+
+

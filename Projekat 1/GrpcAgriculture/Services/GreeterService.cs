@@ -24,7 +24,7 @@ public class GreeterService : Greeter.GreeterBase
 
     public override async Task<SensorReply> GetSensorData(SensorRequest request, ServerCallContext context)
     {
-        var collection = _mongo.GetCollection<SensorData>("iot_data_timeseries");
+        var collection = _mongo.GetCollection<DataModel>("iot_data_timeseries");
 
         var sensor = await collection.Find(x => x.DataId == request.DataId).FirstOrDefaultAsync();
 
