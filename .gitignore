@@ -5,6 +5,9 @@
 *.tmp
 *.log
 *.DS_Store
+.idea/
+*.sublime-project
+*.sublime-workspace
 
 # Binaries
 bin/
@@ -31,3 +34,31 @@ Projekat1/*.txt
 volumes/
 
 *.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# Logs
+*.log
+
+# Quart / ASGI server files (npr. Hypercorn)
+*.pid
+*.sock
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python packaging
+*.egg
+*.egg-info/
+dist/
+build/

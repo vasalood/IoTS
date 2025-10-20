@@ -5,36 +5,36 @@ namespace GrpcAgriculture.Models;
 
 public class DataModel
 {
-    [BsonId]
-    public ObjectId ObjId { get; set; }
+  [BsonId]
+  public ObjectId ObjId { get; set; }
 
-    [BsonElement("metadata")]
-    public Metadata? Metadata { get; set; }
+  [BsonElement("metadata")]
+  public Metadata? Metadata { get; set; }
 
-    [BsonElement("timestamp")]
-    public DateTime Timestamp { get; set; }
+  [BsonElement("timestamp")]
+  public DateTime Timestamp { get; set; }
 
-    [BsonElement("temperature")]
-    public int Temperature { get; set; }
+  [BsonElement("temperature")]
+  public int Temperature { get; set; }
 
-    [BsonElement("humidity")]
-    public int Humidity { get; set; }
+  [BsonElement("humidity")]
+  public int Humidity { get; set; }
 
-    [BsonElement("water_level")]
-    public int WaterLevel { get; set; }
+  [BsonElement("water_level")]
+  public int WaterLevel { get; set; }
 
-    [BsonElement("N")]
-    public int N { get; set; }
+  [BsonElement("N")]
+  public int N { get; set; }
 
-    [BsonElement("P")]
-    public int P { get; set; }
+  [BsonElement("P")]
+  public int P { get; set; }
 
-    [BsonElement("K")]
-    public int K { get; set; }
+  [BsonElement("K")]
+  public int K { get; set; }
 
-    [BsonElement("Watering_plant_pump_ON")]
-    [BsonRepresentation(BsonType.Int32)]
-    public bool WateringPumpOn { get; set; }
+  [BsonElement("Watering_plant_pump_ON")]
+  [BsonRepresentation(BsonType.Int32)]
+  public bool WateringPumpOn { get; set; }
 }
 public class Metadata
 {

@@ -28,7 +28,7 @@ message Metadata {
   string sensor_name = 3;
 }
 
-message Data {
+message SingleDataResponse {
   Metadata metadata = 1;
   int32 temperature = 2;
   int32 humidity = 3;
@@ -37,11 +37,7 @@ message Data {
   int32 P = 6;
   int32 N = 7;
   bool watering_plant_pump_ON = 8;
-}
-
-message SingleDataResponse {
-  Data response = 1;
-  string timestamp = 2;
+  string timestamp = 9;
 }
 
 message UpdateRequest {

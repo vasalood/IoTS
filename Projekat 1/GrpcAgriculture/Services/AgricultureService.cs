@@ -31,22 +31,19 @@ public class AgricultureService : Agriculture.AgricultureBase
 
       return await Task.FromResult(new SingleDataResponse
       {
-        Response = new Data
+        Metadata = new Metadata
         {
-          Metadata = new Metadata
-          {
-            DataId = data.Metadata!.DataId,
-            Location = data.Metadata!.Location,
-            SensorName = data.Metadata!.SensorName
-          },
-          Temperature = data.Temperature,
-          Humidity = data.Humidity,
-          WaterLevel = data.WaterLevel,
-          K = data.K,
-          P = data.P,
-          N = data.N,
-          WateringPlantPumpON = data.WateringPumpOn,
+          DataId = data.Metadata!.DataId,
+          Location = data.Metadata!.Location,
+          SensorName = data.Metadata!.SensorName
         },
+        Temperature = data.Temperature,
+        Humidity = data.Humidity,
+        WaterLevel = data.WaterLevel,
+        K = data.K,
+        P = data.P,
+        N = data.N,
+        WateringPlantPumpON = data.WateringPumpOn,
         Timestamp = data.Timestamp.ToString("O")
       });
     }
@@ -83,31 +80,32 @@ public class AgricultureService : Agriculture.AgricultureBase
       );
 
       var data = await collection.FindAsync(filter);
+      bool foundAny = false;
 
       await foreach (var res in data.ToAsyncEnumerable())
       {
+        foundAny = true;
         await responseStream.WriteAsync(new SingleDataResponse
         {
-          Response = new Data
+          Metadata = new Metadata
           {
-            Metadata = new Metadata
-            {
-              DataId = res.Metadata!.DataId,
-              Location = res.Metadata!.Location,
-              SensorName = res.Metadata!.SensorName
-            },
-            Temperature = res.Temperature,
-            Humidity = res.Humidity,
-            WaterLevel = res.WaterLevel,
-            K = res.K,
-            P = res.P,
-            N = res.N,
-            WateringPlantPumpON = res.WateringPumpOn
+            DataId = res.Metadata!.DataId,
+            Location = res.Metadata!.Location,
+            SensorName = res.Metadata!.SensorName
           },
+          Temperature = res.Temperature,
+          Humidity = res.Humidity,
+          WaterLevel = res.WaterLevel,
+          K = res.K,
+          P = res.P,
+          N = res.N,
+          WateringPlantPumpON = res.WateringPumpOn,
           Timestamp = res.Timestamp.ToString("O")
         }
         );
       }
+
+      if(!foundAny) throw new RpcException(new Status(StatusCode.NotFound, "No data found in the given time range."));
     }
     catch (RpcException)
     {
@@ -257,22 +255,19 @@ public class AgricultureService : Agriculture.AgricultureBase
 
       return new SingleDataResponse
       {
-        Response = new Data
+        Metadata = new Metadata
         {
-          Metadata = new Metadata
-          {
-            DataId = maxTempDoc.Metadata!.DataId,
-            Location = maxTempDoc.Metadata.Location,
-            SensorName = maxTempDoc.Metadata!.SensorName
-          },
-          Temperature = maxTempDoc.Temperature,
-          Humidity = maxTempDoc.Humidity,
-          WaterLevel = maxTempDoc.WaterLevel,
-          K = maxTempDoc.K,
-          P = maxTempDoc.P,
-          N = maxTempDoc.N,
-          WateringPlantPumpON = maxTempDoc.WateringPumpOn
+          DataId = maxTempDoc.Metadata!.DataId,
+          Location = maxTempDoc.Metadata.Location,
+          SensorName = maxTempDoc.Metadata!.SensorName
         },
+        Temperature = maxTempDoc.Temperature,
+        Humidity = maxTempDoc.Humidity,
+        WaterLevel = maxTempDoc.WaterLevel,
+        K = maxTempDoc.K,
+        P = maxTempDoc.P,
+        N = maxTempDoc.N,
+        WateringPlantPumpON = maxTempDoc.WateringPumpOn,
         Timestamp = maxTempDoc.Timestamp.ToString("O")
       };
     }
@@ -310,22 +305,19 @@ public class AgricultureService : Agriculture.AgricultureBase
 
       return await Task.FromResult(new SingleDataResponse
       {
-        Response = new Data
+        Metadata = new Metadata
         {
-          Metadata = new Metadata
-          {
-            DataId = minHumidity.Metadata!.DataId,
-            Location = minHumidity.Metadata!.Location,
-            SensorName = minHumidity.Metadata!.SensorName
-          },
-          Temperature = minHumidity.Temperature,
-          Humidity = minHumidity.Humidity,
-          WaterLevel = minHumidity.WaterLevel,
-          K = minHumidity.K,
-          P = minHumidity.P,
-          N = minHumidity.N,
-          WateringPlantPumpON = minHumidity.WateringPumpOn
+          DataId = minHumidity.Metadata!.DataId,
+          Location = minHumidity.Metadata!.Location,
+          SensorName = minHumidity.Metadata!.SensorName
         },
+        Temperature = minHumidity.Temperature,
+        Humidity = minHumidity.Humidity,
+        WaterLevel = minHumidity.WaterLevel,
+        K = minHumidity.K,
+        P = minHumidity.P,
+        N = minHumidity.N,
+        WateringPlantPumpON = minHumidity.WateringPumpOn,
         Timestamp = minHumidity.Timestamp.ToString("O")
       });
     }
