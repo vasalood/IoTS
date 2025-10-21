@@ -45,7 +45,7 @@ async def get_data_by_timespan():
 
 	return jsonify(result), status_code
 
-@agriculture_bp.route("/updatedata", methods=["PUT"])
+@agriculture_bp.route("/updatedata", methods=["PATCH"])
 async def update_data():
 	body = await request.get_json()
 
