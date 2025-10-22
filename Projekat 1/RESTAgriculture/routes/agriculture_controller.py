@@ -1,6 +1,6 @@
 from datetime import datetime
 from quart import Blueprint, jsonify, request
-from RESTAgriculture.services.grpc_client import GrpcClient
+from services.grpc_client import GrpcClient
 
 agriculture_bp = Blueprint('agriculture', __name__)
 grpc_client = GrpcClient()

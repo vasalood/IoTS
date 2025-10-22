@@ -1,7 +1,7 @@
 import grpc
 from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
-from RESTAgriculture.services.GeneratedProtoClient import agriculture_pb2, agriculture_pb2_grpc
+from services.GeneratedProtoClient import agriculture_pb2, agriculture_pb2_grpc
 
 class GrpcClient:
   def __init__(self, host="localhost", port=5250):
