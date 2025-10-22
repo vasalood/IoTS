@@ -5,24 +5,29 @@ from RESTAgriculture.services.grpc_client import GrpcClient
 agriculture_bp = Blueprint('agriculture', __name__)
 grpc_client = GrpcClient()
 
-def _get_validated_datetime_params(param_names: list) -> tuple:
+def _get_validated_datetime(param_names: list) -> tuple:
 	validated = {}
 	for name in param_names:
 		value = request.args.get(name)
 		if not value:
-			return None, jsonify({"message": f"{name} is required"}), 400
+			return None, jsonify({"error": f"{name} is required"}), 400
 		
 		try:
 			date_time = datetime.fromisoformat(value.replace("Z", "+00:00"))
 		except ValueError:
-			return None, jsonify({"message": f"{name} must be in ISO format"}), 400
+			return None, jsonify({"error": f"{name} must be in ISO format"}), 400
 		
 		validated[name] = date_time
 	
 	return validated, None, None
 
-@agriculture_bp.route('/getdata/<int:data_id>', methods=['GET'])
+@agriculture_bp.route('/getdata/<data_id>', methods=['GET'])
 async def get_data(data_id):
+	try:
+		data_id = int(data_id)
+	except ValueError:
+		return jsonify({"error": "data_id must be an integer"}), 400
+	
 	if data_id <= 0:
 		return jsonify({"error": "data_id must be a positive integer"}), 400
 	
@@ -32,7 +37,7 @@ async def get_data(data_id):
 
 @agriculture_bp.route("/getdata/timespan", methods=["GET"])
 async def get_data_by_timespan():
-	validated, error_response, status_code = _get_validated_datetime_params(["start_time", "end_time"])
+	validated, error_response, status_code = _get_validated_datetime(["start_time", "end_time"])
 	
 	if error_response:
 		return error_response, status_code
@@ -110,15 +115,23 @@ async def add_data():
 
 	return jsonify(result), status_code
 
-@agriculture_bp.route("/deletedata/<int:data_id>", methods=["DELETE"])
+@agriculture_bp.route("/deletedata/<data_id>", methods=["DELETE"])
 async def delete_data(data_id):
+	try:
+		data_id = int(data_id)
+	except ValueError:
+		return jsonify({"error": "data_id must be an integer"}), 400
+	
+	if data_id <= 0:
+		return jsonify({"error": "data_id must be a positive integer"}), 400
+	
 	result = await grpc_client.delete_data(data_id)
 	status_code = result.pop("status_code")
 	return jsonify(result), status_code
 
 @agriculture_bp.route("/maxtemperature", methods=["GET"])
 async def max_temperature():
-	validated, error_response, status_code = _get_validated_datetime_params(["start_time", "end_time"])
+	validated, error_response, status_code = _get_validated_datetime(["start_time", "end_time"])
 	
 	if error_response:
 		return error_response, status_code
@@ -133,7 +146,7 @@ async def max_temperature():
 
 @agriculture_bp.route("/minhumidity", methods=["GET"])
 async def min_humidity():
-	validated, error_response, status_code = _get_validated_datetime_params(["date_time"])
+	validated, error_response, status_code = _get_validated_datetime(["date_time"])
 	if error_response:
 		return error_response, status_code
 	
@@ -167,7 +180,7 @@ async def avg_temp_and_hum():
 
 @agriculture_bp.route("/countwaterpumpon", methods=["GET"])
 async def count_water_pump_on():
-	validated, error_response, status_code = _get_validated_datetime_params(["start_time", "end_time"])
+	validated, error_response, status_code = _get_validated_datetime(["start_time", "end_time"])
 	
 	if error_response:
 		return error_response, status_code

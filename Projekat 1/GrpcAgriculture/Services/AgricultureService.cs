@@ -196,7 +196,10 @@ public class AgricultureService : Agriculture.AgricultureBase
     {
       var collection = _mongo.GetCollection<DataModel>("iot_data_timeseries");
 
-      var filter = Builders<DataModel>.Filter.Eq(x => x.Metadata!.DataId, request.DataId);
+      var filter = Builders<DataModel>.Filter.And(
+        Builders<DataModel>.Filter.Eq(x => x.Metadata!.DataId, request.DataId),
+        Builders<DataModel>.Filter.Eq(x => x.Metadata!.IsDataDeleted, false)
+      );
       var data = await collection.Find(filter).FirstOrDefaultAsync();
 
       if (data == null)

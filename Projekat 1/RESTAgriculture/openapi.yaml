@@ -1,0 +1,402 @@
+openapi: 3.1.0
+
+info:
+  title: REST Agriculture API
+  version: 1.0.0
+  description: This REST API communicates with the Agriculture gRPC microservice to retrieve, add, update, and delete agricultural sensor data.
+
+servers:
+  - url: http://localhost:5000/api
+    description: Local development server
+
+components:
+  schemas:
+    DataRecord:
+      type: object
+      properties:
+        data_id:
+          type: integer
+          format: int32
+          minimum: 1
+        location:
+          type: string
+        sensor_name:
+          type: string
+        temperature:
+          type: integer
+          format: int32
+        humidity:
+          type: integer
+          format: int32
+        water_level:
+          type: integer
+          format: int32
+          minimum: 0
+        K:
+          type: integer
+          format: int32
+          minimum: 0
+        P:
+          type: integer
+          format: int32
+          minimum: 0
+        N:
+          type: integer
+          format: int32
+          minimum: 0
+        watering_plant_pump_ON:
+          type: boolean
+        timestamp:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+    
+    FeedbackResponse:
+      type: object
+      properties:
+        message:
+          type: string
+  
+  responses:
+    BadRequest:
+      description: Invalid request parameters
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Data record not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+paths:
+  /getdata/{data_id}:
+    get:
+      summary: Retrieve a single data record by ID
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          description: Unique integer ID of the data record.
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: Successful response with the requested data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/DataRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /getdata/timespan:
+    get:
+      summary: Retrieve data records within a timespan
+      parameters:
+        - name: start_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: List of data records
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/DataRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /updatedata:
+    patch:
+      summary: Update a data record's location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data_id:
+                  type: integer
+                  format: int32
+                new_location:
+                  type: string
+      responses:
+        '200':
+          description: Update successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /add-data:
+    post:
+      summary: Add a new data record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                location:
+                  type: string
+                sensor_name:
+                  type: string
+                temperature:
+                  type: integer
+                  format: int32
+                humidity:
+                  type: integer
+                  format: int32
+                water_level:
+                  type: integer
+                  format: int32
+                  minimum: 0
+                K:
+                  type: integer
+                  format: int32
+                  minimum: 0
+                P:
+                  type: integer
+                  format: int32
+                  minimum: 0
+                N:
+                  type: integer
+                  format: int32
+                  minimum: 0
+                watering_plant_pump_ON:
+                  type: boolean
+      responses:
+        '200':
+          description: Data record added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /deletedata/{data_id}:
+    delete:
+      summary: Delete a data record by ID
+      parameters:
+        - name: data_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      responses:
+        '200':
+          description: Deletion successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeedbackResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /maxtemperature:
+    get:
+      summary: Retrieve maximum temperature in a timespan
+      parameters:
+        - name: start_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successful response with the requested data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /minhumidity:
+    get:
+      summary: Retrieve minimum humidity for a specific date
+      parameters:
+        - name: date_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successful response with the requested data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /avgtempandhum:
+    post:
+      summary: Calculate average temperature and humidity per month
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  year:
+                    type: integer
+                    format: int32
+                  month:
+                    type: integer
+                    format: int32
+      responses:
+        '200':
+          description: Successful response with the requested data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          oneOf:
+                            - type: object
+                              properties:
+                                month_label:
+                                  type: string
+                                temperature:
+                                  type: number
+                                humidity:
+                                  type: number
+                              required:
+                                - month_label
+                                - temperature
+                                - humidity
+                            - type: object
+                              properties:
+                                month_label:
+                                  type: string
+                                error_message:
+                                  type: string
+                              required:
+                                - month_label
+                                - error_message:
+                      status_code:
+                        type: integer
+                        format: int32  
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /countwaterpumpon:
+    get:
+      summary: Count how many times the water pump was on in a timespan
+      parameters:
+        - name: start_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end_time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successful response with the requested data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: integer
+                    format: int32
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'

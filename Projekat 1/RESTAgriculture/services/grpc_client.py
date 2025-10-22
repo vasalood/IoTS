@@ -18,11 +18,11 @@ class GrpcClient:
     message = e.details() or "Internal server error"
 
     if e.code() == grpc.StatusCode.INVALID_ARGUMENT: 
-      return {"message": message, "status_code": 400} 
+      return {"error": message, "status_code": 400} 
     elif e.code() == grpc.StatusCode.NOT_FOUND: 
-      return {"message": message, "status_code": 404} 
+      return {"error": message, "status_code": 404} 
     else: 
-      return {"message": message, "status_code": 500}
+      return {"error": message, "status_code": 500}
   
   def _format_single_data_response(self, response) -> dict:
     return {
