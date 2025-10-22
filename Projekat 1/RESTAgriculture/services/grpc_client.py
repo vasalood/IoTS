@@ -4,7 +4,7 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from services.GeneratedProtoClient import agriculture_pb2, agriculture_pb2_grpc
 
 class GrpcClient:
-  def __init__(self, host="localhost", port=5250):
+  def __init__(self, host="grpc-agriculture", port=5250):
     self.host = host
     self.port = port
     self.stub = None

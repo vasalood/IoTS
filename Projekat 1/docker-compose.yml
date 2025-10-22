@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  mongo-project-1:
+    image: mongo:6.0
+    container_name: mongo-project-1
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: Vasamare123
+    ports:
+      - "27017:27017"
+    networks:
+      - agriculture-network
+
+  grpc-agriculture:
+    build:
+      context: ./GrpcAgriculture
+      dockerfile: Dockerfile
+    container_name: grpc-agriculture
+    environment:
+      - ASPNETCORE_URLS=http://+:5250
+    ports:
+      - "5250:5250"
+    depends_on:
+      - mongo-project-1
+    networks:
+      - agriculture-network
+
+  rest-agriculture:
+    build:
+      context: ./RESTAgriculture
+      dockerfile: Dockerfile
+    container_name: rest-agriculture
+    ports:
+      - "5000:5000"
+    depends_on:
+      - grpc-agriculture
+    networks:
+      - agriculture-network
+
+  swagger:
+    image: swaggerapi/swagger-ui
+    container_name: swagger
+    ports:
+      - "8080:8080"
+    environment:
+      SWAGGER_JSON: /foo/openapi.yaml
+    volumes:
+      - ./RESTAgriculture:/foo
+    depends_on:
+      - rest-agriculture
+    networks:
+      - agriculture-network
+
+networks:
+  agriculture-network:
+    driver: bridge
