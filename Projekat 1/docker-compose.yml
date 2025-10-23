@@ -8,6 +8,8 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: Vasamare123
     ports:
       - "27017:27017"
+    volumes:
+      - agriculture-data:/data/db
     networks:
       - agriculture-network
 
@@ -54,3 +56,6 @@ services:
 networks:
   agriculture-network:
     driver: bridge
+
+volumes:
+  agriculture-data:
