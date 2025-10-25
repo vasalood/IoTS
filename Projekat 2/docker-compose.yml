@@ -1,0 +1,28 @@
+services:
+  mongo-project-2:
+    image: mongo:latest
+    container_name: mongo-project-2
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: Vasamare123
+    ports:
+      - "27017:27017"
+    volumes:
+      - projekat1_agriculture-data:/data/db
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./MqttBroker/Mosquitto/data:/mosquitto/data
+      - ./MqttBroker/Mosquitto/logs:/mosquitto/logs
+      - ./MqttBroker/Mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+volumes:
+  projekat1_agriculture-data:
+    external: true

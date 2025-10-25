@@ -9,12 +9,18 @@
 *.sublime-project
 *.sublime-workspace
 
-# Binaries
+# Binaries (.NET)
 bin/
 obj/
 *.exe
 *.dll
 *.pdb
+
+# .NET user-specific files
+*.vs/
+*.userprefs
+*.nupkg
+*.snupkg
 
 # Data / exported files
 Data/
@@ -25,40 +31,45 @@ Data/
 # Projekat-specific
 Projekat1/*.txt
 
-# Dotnet
-*.vs/
-*.nupkg
-*.snupkg
-
-# Ignore Docker volumes (optional)
+# Docker volumes (optional)
 volumes/
 
-*.txt
-
-# Byte-compiled / optimized / DLL files
+# Python byte-compiled / optimized files
 __pycache__/
 *.py[cod]
 *$py.class
 
-# Virtual environment
+# Python virtual environments
 .venv/
 env/
 venv/
 ENV/
 
-# Logs
+# Python logs, PID files, sockets
 *.log
-
-# Quart / ASGI server files (npr. Hypercorn)
 *.pid
 *.sock
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # Python packaging
 *.egg
 *.egg-info/
 dist/
 build/
+
+# Quart / Flask specific
+*.db  # SQLite ako se koristi za test
+*.sqlite3
+*.env
+
+# MQTT Mosquitto generated folders
+MqttBroker/Mosquitto/data/
+MqttBroker/Mosquitto/logs/
+
+# MQTT Paho / Python cache (ako generiše)
+*.pyc
+*.pyo
+__pycache__/
+
+# OS files
+.DS_Store
+Thumbs.db
