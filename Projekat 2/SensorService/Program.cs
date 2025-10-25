@@ -13,6 +13,21 @@ var mqttOptions = new MqttClientOptionsBuilder()
   .WithTcpServer("localhost", 1883)
   .Build();
 
+mqttClient.DisconnectedAsync += async e =>
+{
+  Console.WriteLine("MQTT client disconnected. Reconnecting in 2s...");
+  await Task.Delay(2000);
+  try
+  {
+    await mqttClient.ConnectAsync(mqttOptions, CancellationToken.None);
+    Console.WriteLine("Reconnected to MQTT broker.");
+  }
+  catch
+  {
+    Console.WriteLine("Reconnect failed. Will retry...");
+  }
+};
+
 await mqttClient.ConnectAsync(mqttOptions, CancellationToken.None);
 
 if (mqttClient.IsConnected)
@@ -20,6 +35,14 @@ if (mqttClient.IsConnected)
 
 int currentId = 1;
 bool running = false;
+string lastIdFile = "lastId.txt";
+
+if (File.Exists(lastIdFile))
+{
+    var text = File.ReadAllText(lastIdFile);
+    if (int.TryParse(text, out int savedId))
+        currentId = savedId;
+}
 
 Console.WriteLine("Press 'S' to start publishing, 'P' to pause.");
 
@@ -47,27 +70,37 @@ while (true)
       Builders<DataModel>.Filter.Eq("metadata.is_deleted", false)
     );
 
-    var data = await collection.Find(filter).SortBy(x => x.Metadata!.DataId).FirstOrDefaultAsync();
-
-    if (data != null)
+    try
     {
-      data.Timestamp = DateTime.Now;
+      var data = await collection.Find(filter).SortBy(x => x.Metadata!.DataId).FirstOrDefaultAsync();
 
-      currentId = data.Metadata!.DataId + 1; 
+      if (data != null)
+      {
+        data.Timestamp = DateTime.Now;
 
-      var jsonMessage = JsonConvert.SerializeObject(data);
+        currentId = data.Metadata!.DataId + 1;
 
-      var message = new MqttApplicationMessageBuilder()
-        .WithTopic("sensors/data")
-        .WithPayload(jsonMessage)
-        .Build();
+        File.WriteAllText(lastIdFile, (currentId).ToString());
 
-      await mqttClient.PublishAsync(message, CancellationToken.None);
-      Console.WriteLine($"Published ID = {data.Metadata.DataId} at {DateTime.Now}");
-      await Task.Delay(3000);
+        var jsonMessage = JsonConvert.SerializeObject(data);
+
+        var message = new MqttApplicationMessageBuilder()
+          .WithTopic("sensors/data")
+          .WithPayload(jsonMessage)
+          .Build();
+
+        await mqttClient.PublishAsync(message, CancellationToken.None);
+        Console.WriteLine($"Published ID = {data.Metadata.DataId} at {DateTime.Now}");
+        await Task.Delay(3000);
+      }
+      else
+      {
+        await Task.Delay(1000);
+      }
     }
-    else
+    catch (Exception ex)
     {
+      Console.WriteLine($"Error during publish: {ex.Message}");
       await Task.Delay(1000);
     }
   }
