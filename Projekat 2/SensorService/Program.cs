@@ -76,11 +76,18 @@ while (true)
 
       if (data != null)
       {
-        data.Timestamp = DateTime.Now;
+        DateTime utcNow = DateTime.UtcNow;
+        DateTime truncated = new DateTime(
+          utcNow.Year, utcNow.Month, utcNow.Day,
+          utcNow.Hour, utcNow.Minute, utcNow.Second,
+          utcNow.Millisecond,      
+          DateTimeKind.Utc
+        );
+        data.Timestamp = truncated;
 
         currentId = data.Metadata!.DataId + 1;
 
-        File.WriteAllText(lastIdFile, (currentId).ToString());
+        File.WriteAllText(lastIdFile, currentId.ToString());
 
         var jsonMessage = JsonConvert.SerializeObject(data);
 

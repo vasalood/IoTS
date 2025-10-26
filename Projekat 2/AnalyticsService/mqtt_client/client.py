@@ -21,11 +21,12 @@ def on_message(client, userdata, msg):
     print(f"Received message on {msg.topic}")
 
     events = handle_sensor_data(payload)
+    print(f"Detected {len(events)} events.")
 
     for event in events:
       event_json = json.dumps(event)
       client.publish(EVENT_TOPIC, event_json)
-      print(f"Published event to {EVENT_TOPIC}: {event_json}")
+      #print(f"Published event to {EVENT_TOPIC}: {event_json}")
 
   except Exception as e:
     print(f"Error processing message: {e}")
