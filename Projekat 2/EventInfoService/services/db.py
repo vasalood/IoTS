@@ -8,9 +8,9 @@ collection = db[MONGO_COLLECTION]
 def insert_event(event_data):
   try:
     collection.insert_one(event_data)
-    print(f"[MongoDB] Event inserted: {event_data}")
+    print(f"[MongoDB] Event inserted: {event_data}", flush=True)
   except Exception as e:
-    print(f"[MongoDB] Error inserting event: {e}")
+    print(f"[MongoDB] Error inserting event: {e}", flush=True)
 
 def get_events(filter_query=None, limit=5):
   query = filter_query or {}

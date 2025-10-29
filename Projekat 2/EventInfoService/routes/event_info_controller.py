@@ -21,6 +21,9 @@ def get_recent_events():
 
     events = get_events(filter_query=query, limit=limit)
 
+    if not events:
+      return jsonify({"error": "No events found"}), 404
+
     for e in events:
       e["_id"] = str(e["_id"])
     

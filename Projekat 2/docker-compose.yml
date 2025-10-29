@@ -32,16 +32,20 @@ services:
       - mongo-project-2
       - mosquitto
     volumes:
-      - C:\Users\Laptop\Desktop\ELFAK\IoTS\Projekat 2\SensorService\lastId.txt:/app/lastId.txt
+      - "C:\\Users\\Laptop\\Desktop\\ELFAK\\IoTS\\Projekat 2\\SensorService\\lastId.txt:/app/lastId.txt"
 
   analytics-service:
-    build: ./AnalyticsService
+    build: 
+      context: ./AnalyticsService
+      dockerfile: Dockerfile
     container_name: analytics-service
     depends_on:
       - mosquitto
 
   eventinfo-service:
-    build: ./EventInfoService
+    build: 
+      context: ./EventInfoService
+      dockerfile: Dockerfile
     container_name: eventinfo-service
     ports:
       - "5000:5000"

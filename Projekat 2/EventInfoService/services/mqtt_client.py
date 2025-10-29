@@ -29,16 +29,16 @@ def process_event(payload: dict):
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-      print("Connected to MQTT broker.")
+      print("Connected to MQTT broker.", flush=True)
       client.subscribe(BROKER_TOPIC)
-      print(f"Subscribed to topic: {BROKER_TOPIC}")
+      print(f"Subscribed to topic: {BROKER_TOPIC}", flush=True)
     else:
       print(f"[MQTT Client] Connection failed with code {rc}")
 
 def on_message(client, userdata, msg):
   try:
     payload = json.loads(msg.payload.decode())
-    print(f"Received message on {msg.topic}")
+    print(f"Received message on {msg.topic}", flush=True)
     
     process_event(payload)
 

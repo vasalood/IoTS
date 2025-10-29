@@ -2,7 +2,7 @@ from mqtt_client.client import start_mqtt_client
 import time
 
 if __name__ == "__main__":
-	print("Starting Analytics Service...")
+	print("Starting Analytics Service...", flush=True)
 	client = start_mqtt_client()
 
 	try:
