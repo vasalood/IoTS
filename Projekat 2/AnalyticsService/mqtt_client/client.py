@@ -2,7 +2,7 @@ import json
 import paho.mqtt.client as mqtt
 from mqtt_client.handler import handle_sensor_data
 
-BROKER_HOST = "localhost"
+BROKER_HOST = "mosquitto"
 BROKER_PORT = 1883
 SENSOR_TOPIC = "sensors/data"
 EVENT_TOPIC = "analytics/events"

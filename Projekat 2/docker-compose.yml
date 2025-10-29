@@ -23,6 +23,32 @@ services:
       - ./MqttBroker/Mosquitto/logs:/mosquitto/logs
       - ./MqttBroker/Mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
+  sensor-service:
+    build:
+      context: ./SensorService
+      dockerfile: Dockerfile
+    container_name: sensor-service
+    depends_on:
+      - mongo-project-2
+      - mosquitto
+    volumes:
+      - C:\Users\Laptop\Desktop\ELFAK\IoTS\Projekat 2\SensorService\lastId.txt:/app/lastId.txt
+
+  analytics-service:
+    build: ./AnalyticsService
+    container_name: analytics-service
+    depends_on:
+      - mosquitto
+
+  eventinfo-service:
+    build: ./EventInfoService
+    container_name: eventinfo-service
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mosquitto
+      - mongo-project-2
+
 volumes:
   projekat1_agriculture-data:
     external: true
