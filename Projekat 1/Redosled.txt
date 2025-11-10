@@ -1,0 +1,52 @@
+OVAKO SE U DOCKER POKRECE KONTEJNER MONGODB
+
+docker run -d 
+--name mongo-project-1 
+-e MONGO_INITDB_ROOT_USERNAME=mongoadmin 
+-e MONGO_INITDB_ROOT_PASSWORD=Vasamare123 
+-p 27017:27017 
+-v agriculture-data:/data/db mongo
+
+KOPIRANJE DATASETA U KONTEJNER
+
+docker cp ProjectData.csv mongo-project-1:/data/data.csv
+
+IMPORT DATASETA U BAZU
+
+docker exec -it mongo-project-1 mongoimport 
+--username mongoadmin 
+--password Vasamare123 
+--authenticationDatabase admin 
+--db agriculture_database 
+--collection iot_data 
+--type csv 
+--headerline 
+--file /data/data.csv
+
+U VSCODE SE DODA EXTENSION MONGODB I KONEKTUJE SE NA KONTEJNER
+
+U VSCODE SE PROJEKAT PRAVI PO UPUTSTVU SA MICROSOFTA 
+
+POKRECE SE SA dotnet run Program.cs
+
+dotnet new grpc -o GrpcGreeter
+code -r GrpcGreeter
+
+dotnet dev-certs https --trust
+
+POVEZIVANJE GRPC SA MONGO
+
+dotnet add package MongoDB.Driver
+
+
+SWAGGER 
+docker run -d -p 8080:8080 --name swagger --network agriculture-network -e SWAGGER_JSON=/foo/openapi.yaml -v "F:/5 ELFAK/8 IoTS/IoTS/Projekat 1/RESTAgriculture":/foo swaggerapi/swagger-ui
+
+REST KONTEJNER
+docker build -t rest-agriculture:1.0 .
+docker run -d -p 5000:5000 --name rest-agriculture --network agriculture-network rest-agriculture:1.0
+
+GRPC KONTEJNER
+docker build -t grpc-agriculture:1.0 .
+docker run -d -p 5250:5250 --name grpc-agriculture --network agriculture-network grpc-agriculture:1.0
+

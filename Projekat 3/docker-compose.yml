@@ -1,0 +1,66 @@
+services:
+  mongo-project-3:
+    image: mongo:8.0
+    container_name: mongo-project-3
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongoadmin
+      MONGO_INITDB_ROOT_PASSWORD: Vasamare123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_p3_data:/data/db
+
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./MqttBroker/Mosquitto/data:/mosquitto/data
+      - ./MqttBroker/Mosquitto/logs:/mosquitto/logs
+      - ./MqttBroker/Mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+  
+  nats:
+    image: nats:latest
+    container_name: nats-server
+    restart: unless-stopped
+    command: ["-js"]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+  
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_INSTALL_PLUGINS: grafana-mongodb-datasource
+    volumes:
+      - grafana_p3_data:/var/lib/grafana
+    depends_on:
+      - mongo-project-3
+
+  ekuiper:
+    image: lfedge/ekuiper:latest
+    container_name: ekuiper
+    restart: unless-stopped
+    environment:
+      - MQTT_SOURCE__DEFAULT__SERVER=tcp://mosquitto:1883
+    volumes:
+      - ekuiper_p3_data:/kuiper
+    ports:
+      - "9081:9081"
+    depends_on:
+      - mosquitto
+
+volumes:
+  mongo_p3_data:
+  grafana_p3_data:
+  ekuiper_p3_data:
