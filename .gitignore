@@ -73,3 +73,7 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Arduino secrets
+Projekat 3/ArduinoSketch/sketch_iots_project3/secrets.h
+
