@@ -1,79 +1,119 @@
-# Visual Studio / VS Code
+# ======================================================
+# ===   VISUAL STUDIO / VS CODE / IDE SPECIFIC       ===
+# ======================================================
 .vscode/
-*.user
+.idea/
 *.suo
+*.user
+*.userprefs
+*.sublime-project
+*.sublime-workspace
 *.tmp
 *.log
 *.DS_Store
-.idea/
-*.sublime-project
-*.sublime-workspace
+Thumbs.db
 
-# Binaries (.NET)
+# ======================================================
+# ===   .NET / C# BUILD ARTIFACTS                    ===
+# ======================================================
 bin/
 obj/
 *.exe
 *.dll
 *.pdb
-
-# .NET user-specific files
-*.vs/
-*.userprefs
 *.nupkg
 *.snupkg
+.vs/
 
-# Data / exported files
-Data/
-*.csv
-*.db
-*.bak
-
-# Projekat-specific
-Projekat1/*.txt
-
-# Docker volumes (optional)
-volumes/
-
-# Python byte-compiled / optimized files
+# ======================================================
+# ===   PYTHON SPECIFIC                              ===
+# ======================================================
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyo
+*.log
+*.pid
+*.sock
 
-# Python virtual environments
+# Virtual environments
 .venv/
 env/
 venv/
 ENV/
 
-# Python logs, PID files, sockets
-*.log
-*.pid
-*.sock
-
-# Python packaging
+# Packaging / Build
 *.egg
 *.egg-info/
 dist/
 build/
 
-# Quart / Flask specific
-*.db  # SQLite ako se koristi za test
+# Local database / cache
+*.db
 *.sqlite3
 *.env
 
-# MQTT Mosquitto generated folders
+# ======================================================
+# ===   PROJECT SPECIFIC (IoTS / Projekat folders)   ===
+# ======================================================
+Data/
+*.csv
+*.bak
+*.db
+
+# Arduino sensitive info
+secrets.h
+
+# Generated Docker volumes and runtime data
+volumes/
 MqttBroker/Mosquitto/data/
 MqttBroker/Mosquitto/logs/
+**/tmp/
+**/__pycache__/
 
-# MQTT Paho / Python cache (ako generiše)
-*.pyc
-*.pyo
-__pycache__/
+# ======================================================
+# ===   DOCKER / COMPOSE / SERVICES RUNTIME FILES    ===
+# ======================================================
+# Docker-specific temporary files
+*.pid
+*.tar
+*.bak
+*.old
 
-# OS files
+# Local container logs and state
+docker-compose.override.yml
+**/logs/
+**/log/
+
+# ======================================================
+# ===   NATS / MQTT / MONGO / EQUIPER CACHE FILES    ===
+# ======================================================
+# NATS
+.nats/
+nats_data/
+nats.log
+*.nats
+
+# MongoDB dumps and restore directories
+dump/
+restore/
+mongo_p3_data/
+grafana_p3_data/
+ekuiper_p3_data/
+
+# EKuiper runtime and config cache
+ekuiper-data/
+ekuiper_p3_data/
+
+# ======================================================
+# ===   PROJECT 1 EXAMPLES                           ===
+# ======================================================
+Projekat 1/*.txt
+
+# ======================================================
+# ===   OS / SYSTEM TRASH FILES                      ===
+# ======================================================
 .DS_Store
 Thumbs.db
-
-# Arduino secrets
-Projekat 3/ArduinoSketch/sketch_iots_project3/secrets.h
-
+ehthumbs.db
+desktop.ini
