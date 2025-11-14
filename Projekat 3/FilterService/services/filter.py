@@ -36,14 +36,14 @@ class FilterService:
     # inicijalizuj prozor
     if self._window_started_at is None:
       self._window_started_at = datetime.now(timezone.utc)
-
-    # ubaci uzorak
-    self._bucket.append((ts, float(temp), sensor_name))
-
+      
     # proveri da li je prozor istekao
     elapsed = (datetime.now(timezone.utc) - self._window_started_at).total_seconds()
     if elapsed >= self.window_sec and self._bucket:
       self._flush()
+
+    # ubaci uzorak
+    self._bucket.append((ts, float(temp), sensor_name))
 
   def _flush(self):
     # izračunaj avg temperature i broj uzoraka

@@ -1,0 +1,19 @@
+{
+  "name": "dashboardservice",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongodb": "^7.0.0",
+    "nats": "^2.29.3",
+    "pino": "^10.1.0"
+  }
+}
