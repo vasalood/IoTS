@@ -65,7 +65,7 @@ async function main() {
 
       const docs = await col
         .find({})
-        .sort({ timestamp: 1 })
+        .sort({ timestamp: -1 })
         .limit(limit)
         .toArray();
 

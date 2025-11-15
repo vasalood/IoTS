@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <meta charset="utf-8" />
+  <title>Command Dashboard</title>
+</head>
+
+<body>
+  <h1>Command Events</h1>
+  <ul id="events"></ul>
+
+  <script>
+    const list = document.getElementById("events");
+    const ws = new WebSocket("ws://" + window.location.host + "/ws/commands");
+
+    ws.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    ws.onmessage = (event) => {
+      const li = document.createElement("li");
+      li.textContent = event.data;
+      list.prepend(li);
+    };
+
+    ws.onclose = () => {
+      console.log("WebSocket closed");
+    };
+  </script>
+</body>
+</html>
