@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "express": "^5.1.0",
     "mongodb": "^7.0.0",
     "nats": "^2.29.3",
     "pino": "^10.1.0"

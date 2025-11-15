@@ -1,3 +1,4 @@
+import express from "express";
 import { createNatsConnection, subscribeNATS } from "./nats.js";
 import { createMongoClient } from "./mongo.js";
 
@@ -9,6 +10,16 @@ const COLL_NAME = "telemetry_data";
 
 let nc;      // NATS connection
 let client;  // Mongo client
+
+function parseDateParam(value) {
+  if (!value) return null;
+
+  // ako je broj → timestamp
+  if (!isNaN(value)) return new Date(parseInt(value));
+
+  // ako je string → Date ga sam parse-uje
+  return new Date(value);
+}
 
 async function main() {
   console.log("[dash] Starting DashboardService ...");
@@ -23,20 +34,8 @@ async function main() {
 
   // 3) Obrada poruka sa NATS-a
   subscribeNATS(nc, SUBJECT, async (msg) => {
-    // Očekujemo poruku iz FilterService-a, npr:
-    // {
-    //   sensor_name: "MKR1010_WiFi",
-    //   window: { type: "tumbling", size_sec: 15 },
-    //   t_start: "...",
-    //   t_end: "...",
-    //   avg: { temperature: 23.4 },
-    //   count: 5
-    // }
-
-    // ts -> koristimo t_end (kraj prozora) kao vremensku tačku
-    const timestamp = new Date(msg.t_end);
     const doc = {
-      timestamp: timestamp,
+      timestamp: new Date(msg.t_end),
       metadata: {
         sensor_name: msg.sensor_name,
         window: msg.window
@@ -52,6 +51,63 @@ async function main() {
       avg: doc.average_temp,
       count: doc.count
     });
+  });
+
+  const app = express();
+
+  app.get("/", (req, res) => {
+    res.json({ status: "ok" });
+  });
+
+  app.get("/api/telemetry/latest", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit ?? "50", 10);
+
+      const docs = await col
+        .find({})
+        .sort({ timestamp: 1 })
+        .limit(limit)
+        .toArray();
+
+      // možeš da preformatiraš ako želiš
+      res.json(docs);
+    } catch (err) {
+      console.error("[dash] /api/telemetry/latest error:", err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/api/telemetry", async (req, res) => {
+    try {
+      const from = parseDateParam(req.query.from);
+      const to   = parseDateParam(req.query.to);
+      const limit = req.query.limit ? parseInt(req.query.limit) : 500;
+
+      const query = {};
+
+      if (from || to) {
+        query.timestamp = {};
+        if (from) query.timestamp.$gte = from;
+        if (to)   query.timestamp.$lte = to;
+      }
+
+      const docs = await col
+        .find(query)
+        .sort({ timestamp: 1 })   // time-series prikaz treba da ide od starijeg ka novijem
+        .limit(limit)
+        .toArray();
+
+      res.json(docs);
+    } catch (err) {
+      console.error("[dash] /api/telemetry error:", err);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  const PORT = 4000;
+
+  app.listen(PORT, () => {
+    console.log(`[dash] HTTP API listening on http://localhost:${PORT}`);
   });
 
   // 4) graceful shutdown
