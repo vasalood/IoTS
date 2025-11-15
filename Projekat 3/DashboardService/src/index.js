@@ -2,37 +2,32 @@ import express from "express";
 import { createNatsConnection, subscribeNATS } from "./nats.js";
 import { createMongoClient } from "./mongo.js";
 
-const NATS_URL = "nats://localhost:4222";
+const NATS_URL = "nats://nats-server:4222";
 const SUBJECT  = "avg.sensor.data.>";
-const MONGO_URL = "mongodb://mongoadmin:Vasamare123@localhost:27017/";
+const MONGO_URL = "mongodb://mongoadmin:Vasamare123@mongo-project-3:27017/";
 const DB_NAME   = "project_3";
 const COLL_NAME = "telemetry_data";
 
-let nc;      // NATS connection
-let client;  // Mongo client
+let nc;     
+let client;  
 
 function parseDateParam(value) {
   if (!value) return null;
 
-  // ako je broj → timestamp
   if (!isNaN(value)) return new Date(parseInt(value));
 
-  // ako je string → Date ga sam parse-uje
   return new Date(value);
 }
 
 async function main() {
   console.log("[dash] Starting DashboardService ...");
 
-  // 1) NATS
   nc = await createNatsConnection(NATS_URL);
 
-  // 2) Mongo
   client = await createMongoClient(MONGO_URL);
   const db = client.db(DB_NAME);
   const col = db.collection(COLL_NAME);
 
-  // 3) Obrada poruka sa NATS-a
   subscribeNATS(nc, SUBJECT, async (msg) => {
     const doc = {
       timestamp: new Date(msg.t_end),
@@ -69,7 +64,6 @@ async function main() {
         .limit(limit)
         .toArray();
 
-      // možeš da preformatiraš ako želiš
       res.json(docs);
     } catch (err) {
       console.error("[dash] /api/telemetry/latest error:", err);
@@ -93,7 +87,7 @@ async function main() {
 
       const docs = await col
         .find(query)
-        .sort({ timestamp: 1 })   // time-series prikaz treba da ide od starijeg ka novijem
+        .sort({ timestamp: 1 }) 
         .limit(limit)
         .toArray();
 
@@ -110,7 +104,6 @@ async function main() {
     console.log(`[dash] HTTP API listening on http://localhost:${PORT}`);
   });
 
-  // 4) graceful shutdown
   process.on("SIGINT", stop);
   process.on("SIGTERM", stop);
 }

@@ -16,7 +16,7 @@ public class MqttCommandWorker : BackgroundService
 
   private bool _stopping;
 
-  private const string BrokerHost = "localhost"; 
+  private const string BrokerHost = "mosquitto"; 
   private const int BrokerPort = 1883;
   private const string CommandTopic = "data/command";
 
@@ -85,7 +85,7 @@ public class MqttCommandWorker : BackgroundService
           }
           else if (msg.Command == "TURN_OFF_AC")
           {
-            if (_acOn)   // klima je bila uključena → sada je isključujemo
+            if (_acOn)   
             {
               _acOn = false;
               shouldBroadcast = true;

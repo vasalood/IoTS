@@ -41,7 +41,6 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_INSTALL_PLUGINS: grafana-mongodb-datasource
     volumes:
       - grafana_p3_data:/var/lib/grafana
     depends_on:
@@ -59,6 +58,39 @@ services:
       - "9081:9081"
     depends_on:
       - mosquitto
+
+  filter-service:
+    build:
+      context: ./FilterService
+      dockerfile: Dockerfile
+    container_name: filter-service
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+      - nats
+
+  dashboard-service:
+    build:
+      context: ./DashboardService
+      dockerfile: Dockerfile
+    container_name: dashboard-service
+    restart: unless-stopped
+    depends_on:
+      - nats
+      - mongo-project-3
+    ports:
+      - "4000:4000"
+
+  command-service:
+    build:
+      context: ./CommandService
+      dockerfile: Dockerfile
+    container_name: command-service
+    restart: unless-stopped
+    depends_on:
+      - mosquitto
+    ports:
+      - "5000:8080"
 
 volumes:
   mongo_p3_data:

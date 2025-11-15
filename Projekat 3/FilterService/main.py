@@ -6,11 +6,11 @@ from nats_client.publisher import NatsPublisher
 from services.filter import FilterService
 from mqtt_client.client import MqttWorker
 
-BROKER_HOST = "localhost"
+BROKER_HOST = "mosquitto"
 BROKER_PORT = 1883
 BROKER_TOPIC = "sensor/data"
 
-NATS_URL = "nats://localhost:4222"
+NATS_URL = "nats://nats-server:4222"
 NATS_SUBJECT = "avg.sensor.data"
 
 WINDOW_SEC = 15
